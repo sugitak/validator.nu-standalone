@@ -1,5 +1,9 @@
 *.class
 *.log
+.project
+.classpath
+.cache
+.settings
 
 # sbt specific
 dist/*
@@ -10,4 +14,16 @@ project/boot/
 project/plugins/project/
 
 # Scala-IDE specific
-.scala_dependencies
+.scala_dependencieschecker/build
+checker/build
+checker/dependencies
+checker/htmlparser
+checker/jing-trang
+checker/nu-validator-site
+checker/syntax
+checker/util
+checker/validator
+checker/xmlparser
+checker/jars
+checker/local-entities
+lib
