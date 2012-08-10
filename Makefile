@@ -5,11 +5,18 @@ all:			$(PROGRAM)
 $(PROGRAM):		validator
 				
 validator:		
-				-mkdir checker
-				make -C checker all				
+				make -C checker all
+				./sbt compile
+					
 clean:			
 				make -C checker clean
 				rm -rf lib/*.jar
 				
 dist-clean:		clean
 				make -C checker dist-clean
+				
+run:			validator
+				./sbt run
+				
+jar:			validator
+				./sbt assembly

@@ -19,6 +19,15 @@ How to run the Validator.nu standalone
 
 Then go to [http://localhost:8888](http://localhost:8888).
 
+How to generate a standalone jar
+----------------------------
+
+	make jar
+	
+Then you can run validator following:
+
+	java -jar target/validator-nu-standalone.jar 8888
+
 Licence
 -------
 
