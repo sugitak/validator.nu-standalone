@@ -22,7 +22,7 @@ object HTMLValidator extends Build {
       crossScalaVersions := Seq("2.9.2"),
       javacOptions ++= Seq("-Xlint:unchecked -Xmx256m -XX:ThreadStackSize=2048"),
       mainClass in assembly := Some("org.w3.htmlvalidator.HTMLValidatorMain"),
-      jarName in assembly := "validator-nu-validator-standalone.jar",
+      jarName in assembly := "validator-nu-standalone.jar",
 
       mergeStrategy in assembly := { 
         case "META-INF/MANIFEST.MF" => MergeStrategy.rename
