@@ -14,23 +14,30 @@ object HTMLValidator extends Build {
   lazy val htmlValidator = Project(
     id = "nu-validator-standalone",
     base = file("."),
+
     settings = Defaults.defaultSettings /*++ webSettings*/ ++ assemblySettings ++ Seq(
       organization := "org.w3",
       version := "1.0-SNAPSHOT",
       scalaVersion := "2.9.2",
       crossScalaVersions := Seq("2.9.2"),
-      javacOptions ++= Seq("-Xlint:unchecked -Xmx128m -XX:ThreadStackSize=2048"),
+      javacOptions ++= Seq("-Xlint:unchecked -Xmx256m -XX:ThreadStackSize=2048"),
       mainClass in assembly := Some("org.w3.htmlvalidator.HTMLValidatorMain"),
       jarName in assembly := "validator-nu-validator-standalone.jar",
-//      test in assembly := {},
+
+      mergeStrategy in assembly := { 
+        case "META-INF/MANIFEST.MF" => MergeStrategy.rename
+        case _ => MergeStrategy.concat 
+      }, 
+      
+      //      test in assembly := {},
       licenses := Seq("W3C License" -> url("http://opensource.org/licenses/W3C")),
       homepage := Some(url("https://github.com/w3c/validator.nu-standalone")),
       publishTo <<= version { (v: String) =>
         val nexus = "https://oss.sonatype.org/"
-        if (v.trim.endsWith("SNAPSHOT")) 
-          Some("snapshots" at nexus + "content/repositories/snapshots") 
+        if (v.trim.endsWith("SNAPSHOT"))
+          Some("snapshots" at nexus + "content/repositories/snapshots")
         else
-          Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+          Some("releases" at nexus + "service/local/staging/deploy/maven2")
       },
       publishArtifact in Test := false,
       pomIncludeRepository := { _ => false },
@@ -45,19 +52,16 @@ object HTMLValidator extends Build {
             <name>Hirotaka Nakajima</name>
             <url>http://hirotaka.org</url>
           </developer>
-        </developers>
-      ),
-      
+        </developers>),
+
       resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
       resolvers += "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
       resolvers += "apache-repo-releases" at "http://repository.apache.org/content/repositories/releases/",
-      libraryDependencies += "org.eclipse.jetty" % "jetty-webapp" % "8.0.1.v20110908" % "compile", //  % "compile,container",
-      libraryDependencies += "javax.servlet" % "servlet-api" % "2.5" % "compile",
       libraryDependencies += "org.mortbay.jetty" % "jetty" % "6.1.26" % "compile",
       libraryDependencies += "org.mortbay.jetty" % "servlet-api" % "2.5-20081211" % "compile",
       libraryDependencies += "org.mortbay.jetty" % "jetty-util" % "6.1.26" % "compile",
       libraryDependencies += "org.mortbay.jetty" % "jetty-ajp" % "6.1.26" % "compile",
-      libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.5.2" % "compile", 
+      libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.5.2" % "compile",
       libraryDependencies += "commons-codec" % "commons-codec" % "1.4",
       libraryDependencies += "commons-httpclient" % "commons-httpclient" % "3.1",
       libraryDependencies += "commons-logging" % "commons-logging" % "1.1.1",
@@ -76,9 +80,6 @@ object HTMLValidator extends Build {
       libraryDependencies += "com.ibm.icu" % "icu4j" % "4.4.2" from "http://download.icu-project.org/files/icu4j/4.4.2/icu4j-4_4_2.jar",
       libraryDependencies += "com.ibm.icu" % "icu4j-charsets" % "4.4.2" from "http://download.icu-project.org/files/icu4j/4.4.2/icu4j-charsets-4_4_2.jar",
       libraryDependencies += "antlr" % "antlr" % "validator.nu" from "http://hsivonen.iki.fi/code/antlr.jar",
-      libraryDependencies += "isorelax" % "isorelax" % "20041111" from "http://surfnet.dl.sourceforge.net/sourceforge/iso-relax/isorelax.20041111.zip"
-      
-    )
-  )
+      libraryDependencies += "isorelax" % "isorelax" % "20041111" from "http://surfnet.dl.sourceforge.net/sourceforge/iso-relax/isorelax.20041111.zip"))
 
 }
