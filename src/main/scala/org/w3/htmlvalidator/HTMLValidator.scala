@@ -30,15 +30,15 @@ import scala.collection.immutable.Map
  * Validator.nu wrapping class
  * @author Hirotaka Nakajima <hiro@w3.org>
  */
-class HTMLValidator(port: Int, ajp:Boolean = false) {
-  private val SIZE_LIMIT:Long = Integer.parseInt(System.getProperty("nu.validator.servlet.max-file-size", "2097152"));
+class HTMLValidator(port: Int, ajp: Boolean = false) {
+  private val SIZE_LIMIT: Long = Integer.parseInt(System.getProperty("nu.validator.servlet.max-file-size", "2097152"));
 
-//  if (!"1".equals(System.getProperty("nu.validator.servlet.read-local-log4j-properties"))) {
+  //  if (!"1".equals(System.getProperty("nu.validator.servlet.read-local-log4j-properties"))) {
   PropertyConfigurator.configure(classOf[Main].getClassLoader().getResource("nu/validator/localentities/files/log4j.properties"));
-//  } else {
-//    PropertyConfigurator.configure(System.getProperty("nu.validator.servlet.log4j-properties", "log4j.properties"));
-//  }
-  
+  //  } else {
+  //    PropertyConfigurator.configure(System.getProperty("nu.validator.servlet.log4j-properties", "log4j.properties"));
+  //  }
+
   var server: Server = new Server
   var pool: QueuedThreadPool = new QueuedThreadPool
   pool.setMaxThreads(100);
@@ -65,48 +65,46 @@ class HTMLValidator(port: Int, ajp:Boolean = false) {
   context.addFilter(new FilterHolder(new InboundGzipFilter), "/*", Handler.REQUEST);
   context.addFilter(new FilterHolder(new MultipartFormDataFilter), "/*", Handler.REQUEST);
   context.addServlet(new ServletHolder(new VerifierServlet), "/*");
-  
+
   def stop(): Unit = {
     server.stop()
   }
-  
+
   def start(): Unit = {
-    server.start() 
+    server.start()
   }
 }
 
-
 class HTMLValidatorConfiguration(
-    val readLocalLog4JProperties:Int = 1,
-    val log4jProperties:String = "validator/log4j.properties",
-    val version:Int = 3,
-    val serviceName:String = "Validator.nu",
-    val dataTypeWarn:Boolean = true,
-    val aboutPage:String = "http://about.validator.nu/",
-    val styleSheet:String = "style.css",
-    val icon:String = "icon.png",
-    val script:String = "script.js",
-    val specHtml5Load:String = "http://www.whatwg.org/specs/web-apps/current-work/",
-    val specHtml5Link:String = "http://www.whatwg.org/specs/web-apps/current-work/",
-    val maxFileSize:Int = 7340032,
-    val connectionTimeout:Int = 5000,
-    val socketTimeout:Int = 5000,
-    val w3cBranding:Int = 0,
-    val statistics:Int = 0,
-    val httpRequestMaxFormContentSize:Int = 7340032,
-    val hostGeneric:String = "",
-    val hostHtml5:String = "",
-    val hostParseTree:String = "",
-    val pathGeneric:String = "/",
-    val pathHtml5:String = "/html5/",
-    val pathParseTree:String = "/parsetree/",
-    val pathAbout:String = "./validator/site/"
-    ){
+  val readLocalLog4JProperties: Int = 1,
+  val log4jProperties: String = "validator/log4j.properties",
+  val version: Int = 3,
+  val serviceName: String = "Validator.nu",
+  val dataTypeWarn: Boolean = true,
+  val aboutPage: String = "http://about.validator.nu/",
+  val styleSheet: String = "style.css",
+  val icon: String = "icon.png",
+  val script: String = "script.js",
+  val specHtml5Load: String = "http://www.whatwg.org/specs/web-apps/current-work/",
+  val specHtml5Link: String = "http://www.whatwg.org/specs/web-apps/current-work/",
+  val maxFileSize: Int = 7340032,
+  val connectionTimeout: Int = 5000,
+  val socketTimeout: Int = 5000,
+  val w3cBranding: Int = 0,
+  val statistics: Int = 0,
+  val httpRequestMaxFormContentSize: Int = 7340032,
+  val hostGeneric: String = "",
+  val hostHtml5: String = "",
+  val hostParseTree: String = "",
+  val pathGeneric: String = "/",
+  val pathHtml5: String = "/html5/",
+  val pathParseTree: String = "/parsetree/",
+  val pathAbout: String = "./validator/site/") {
 
   case class ValidatorConfig(confname: String, value: Any)
-  
+
   implicit def triple2config(triple: (String, Any)): ValidatorConfig = triple match {
-    case (confname,value) => ValidatorConfig(confname,value)
+    case (confname, value) => ValidatorConfig(confname, value)
   }
 
   val configs: List[ValidatorConfig] = List(
@@ -136,13 +134,14 @@ class HTMLValidatorConfiguration(
     ("nu.validator.servlet.path.about", pathAbout))
 
   def setSystemProperties = {
-     configs map {case i => {
-    	 System.setProperty(i.confname,i.value.toString())
-       }}
+    configs map {
+      case i => {
+        System.setProperty(i.confname, i.value.toString())
+      }
+    }
   }
-  
-}
 
+}
 
 object HTMLValidatorMain {
 
