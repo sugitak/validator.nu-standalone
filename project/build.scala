@@ -7,10 +7,10 @@ import sbtassembly.Plugin._
 import AssemblyKeys._
 
 /**
- * build configuration for CSS Validator Standalone
+ * build configuration for Validator.nu Standalone
  */
 object HTMLValidator extends Build {
-
+  
   lazy val htmlValidator = Project(
     id = "nu-validator-standalone",
     base = file("."),
@@ -72,7 +72,7 @@ object HTMLValidator extends Build {
       libraryDependencies += "rhino" % "js" % "1.7R1",
       libraryDependencies += "xerces" % "xercesImpl" % "2.9.1",
       libraryDependencies += "net.sourceforge.jchardet" % "jchardet" % "1.0",
-      libraryDependencies += "net.sourceforge.saxon" % "saxon" % "9.1.0.2" from "http://kent.dl.sourceforge.net/sourceforge/saxon/saxonb9-1-0-2j.zip",
+      libraryDependencies += "net.sourceforge.saxon" % "saxon" % "9.1.0.2" from "http://switch.dl.sourceforge.net/sourceforge/saxon/saxonb9-1-0-2j.zip",
       libraryDependencies += "junit" % "junit" % "4.4",
       libraryDependencies += "xom" % "xom" % "1.1",
       libraryDependencies += "com.sdicons.jsontools" % "jsontools-core" % "1.5",
@@ -80,6 +80,8 @@ object HTMLValidator extends Build {
       libraryDependencies += "com.ibm.icu" % "icu4j" % "4.4.2" from "http://download.icu-project.org/files/icu4j/4.4.2/icu4j-4_4_2.jar",
       libraryDependencies += "com.ibm.icu" % "icu4j-charsets" % "4.4.2" from "http://download.icu-project.org/files/icu4j/4.4.2/icu4j-charsets-4_4_2.jar",
       libraryDependencies += "antlr" % "antlr" % "validator.nu" from "http://hsivonen.iki.fi/code/antlr.jar",
-      libraryDependencies += "isorelax" % "isorelax" % "20041111" from "http://surfnet.dl.sourceforge.net/sourceforge/iso-relax/isorelax.20041111.zip"))
+      libraryDependencies += "isorelax" % "isorelax" % "20041111" from "http://switch.dl.sourceforge.net/sourceforge/iso-relax/isorelax.20041111.zip"))
 
 }
+
+
