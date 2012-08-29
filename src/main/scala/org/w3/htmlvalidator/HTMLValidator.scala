@@ -30,7 +30,7 @@ import scala.collection.immutable.Map
  * Validator.nu wrapping class
  * @author Hirotaka Nakajima <hiro@w3.org>
  */
-class HTMLValidator(port: Int, ajp: Boolean = false) {
+class HTMLValidator(server: Server, port: Int, ajp: Boolean = false) {
   private val SIZE_LIMIT: Long = Integer.parseInt(System.getProperty("nu.validator.servlet.max-file-size", "2097152"));
 
   //  if (!"1".equals(System.getProperty("nu.validator.servlet.read-local-log4j-properties"))) {
@@ -38,11 +38,6 @@ class HTMLValidator(port: Int, ajp: Boolean = false) {
   //  } else {
   //    PropertyConfigurator.configure(System.getProperty("nu.validator.servlet.log4j-properties", "log4j.properties"));
   //  }
-
-  var server: Server = new Server
-  var pool: QueuedThreadPool = new QueuedThreadPool
-  pool.setMaxThreads(100);
-  server.setThreadPool(pool);
 
   val connector: Connector =
 
@@ -149,7 +144,12 @@ object HTMLValidatorMain {
     val port = args.toList.headOption.map(_.toInt) getOrElse 8888
     val valconf = new HTMLValidatorConfiguration()
     valconf.setSystemProperties
-    val htmlval = new HTMLValidator(port)
+    var server: Server = new Server
+    var pool: QueuedThreadPool = new QueuedThreadPool
+    pool.setMaxThreads(100);
+    server.setThreadPool(pool);
+
+    val htmlval = new HTMLValidator(server, port)
 
     htmlval.start()
 
