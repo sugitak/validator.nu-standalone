@@ -7,7 +7,6 @@ import java.net.ConnectException
 import java.net.InetAddress
 import java.net.ServerSocket
 import java.net.Socket
-import nu.validator.servlet.Main
 import nu.validator.servletfilter.InboundGzipFilter
 import nu.validator.servletfilter.InboundSizeLimitFilter
 import org.apache.log4j.PropertyConfigurator
@@ -34,7 +33,7 @@ class HTMLValidator(server: Server, port: Int, ajp: Boolean = false) {
   private val SIZE_LIMIT: Long = Integer.parseInt(System.getProperty("nu.validator.servlet.max-file-size", "2097152"));
 
   //  if (!"1".equals(System.getProperty("nu.validator.servlet.read-local-log4j-properties"))) {
-  PropertyConfigurator.configure(classOf[Main].getClassLoader().getResource("nu/validator/localentities/files/log4j.properties"));
+  PropertyConfigurator.configure(classOf[nu.validator.servlet.Main].getClassLoader().getResource("nu/validator/localentities/files/log4j.properties"));
   //  } else {
   //    PropertyConfigurator.configure(System.getProperty("nu.validator.servlet.log4j-properties", "log4j.properties"));
   //  }
@@ -70,68 +69,134 @@ class HTMLValidator(server: Server, port: Int, ajp: Boolean = false) {
   }
 }
 
-class HTMLValidatorConfiguration(
-  val readLocalLog4JProperties: Int = 1,
-  val log4jProperties: String = "validator/log4j.properties",
-  val version: Int = 3,
-  val serviceName: String = "Validator.nu",
-  val dataTypeWarn: Boolean = true,
-  val aboutPage: String = "http://about.validator.nu/",
-  val styleSheet: String = "style.css",
-  val icon: String = "icon.png",
-  val script: String = "script.js",
-  val specHtml5Load: String = "http://www.whatwg.org/specs/web-apps/current-work/",
-  val specHtml5Link: String = "http://www.whatwg.org/specs/web-apps/current-work/",
-  val maxFileSize: Int = 7340032,
-  val connectionTimeout: Int = 5000,
-  val socketTimeout: Int = 5000,
-  val w3cBranding: Int = 0,
-  val statistics: Int = 0,
-  val httpRequestMaxFormContentSize: Int = 7340032,
-  val hostGeneric: String = "",
-  val hostHtml5: String = "",
-  val hostParseTree: String = "",
-  val pathGeneric: String = "/",
-  val pathHtml5: String = "/html5/",
-  val pathParseTree: String = "/parsetree/",
-  val pathAbout: String = "./validator/site/") {
+case class HTMLValidatorConfiguration() {
 
-  case class ValidatorConfig(confname: String, value: Any)
+  var configs = Map[String, Any]().empty +
+    ("nu.validator.servlet.read-local-log4j-properties" -> 1) +
+    ("nu.validator.servlet.log4j-properties" -> "validator/log4j.properties") +
+    ("nu.validator.servlet.version" -> 3) +
+    ("nu.validator.servlet.service-name" -> "Validator.nu") +
+    ("org.whattf.datatype.warn" -> true) +
+    ("nu.validator.servlet.about-page" -> "http://about.validator.nu/") +
+    ("nu.validator.servlet.style-sheet" -> "style.css") +
+    ("nu.validator.servlet.icon" -> "icon.png") +
+    ("nu.validator.servlet.script" -> "script.js") +
+    ("nu.validator.spec.html5-load" -> "http://www.whatwg.org/specs/web-apps/current-work/") +
+    ("nu.validator.spec.html5-link" -> "http://www.whatwg.org/specs/web-apps/current-work/") +
+    ("nu.validator.servlet.max-file-size" -> 7340032) +
+    ("nu.validator.servlet.connection-timeout" -> 5000) +
+    ("nu.validator.servlet.socket-timeout" -> 5000) +
+    ("nu.validator.servlet.w3cbranding" -> 0) +
+    ("nu.validator.servlet.statistics" -> 0) +
+    ("org.mortbay.http.HttpRequest.maxFormContentSize" -> 7340032) +
+    ("nu.validator.servlet.host.generic" -> "") +
+    ("nu.validator.servlet.host.html5" -> "") +
+    ("nu.validator.servlet.host.parsetree" -> "") +
+    ("nu.validator.servlet.path.generic" -> "/") +
+    ("nu.validator.servlet.path.html5" -> "/html5/") +
+    ("nu.validator.servlet.path.parsetree" -> "/parsetree/") +
+    ("nu.validator.servlet.path.about" -> "./validator/site/")
 
-  implicit def triple2config(triple: (String, Any)): ValidatorConfig = triple match {
-    case (confname, value) => ValidatorConfig(confname, value)
+  def readLocalLog4JProperties(b: Boolean) = {
+    configs = configs + ("nu.validator.servlet.read-local-log4j-properties" -> (if (b) 1 else 0))
   }
 
-  val configs: List[ValidatorConfig] = List(
-    ("nu.validator.servlet.read-local-log4j-properties", readLocalLog4JProperties),
-    ("nu.validator.servlet.log4j-properties", log4jProperties),
-    ("nu.validator.servlet.version", version),
-    ("nu.validator.servlet.service-name", serviceName),
-    ("org.whattf.datatype.warn", dataTypeWarn),
-    ("nu.validator.servlet.about-page", aboutPage),
-    ("nu.validator.servlet.style-sheet", styleSheet),
-    ("nu.validator.servlet.icon", icon),
-    ("nu.validator.servlet.script=script", script),
-    ("nu.validator.spec.html5-load", specHtml5Load),
-    ("nu.validator.spec.html5-link", specHtml5Link),
-    ("nu.validator.servlet.max-file-size", maxFileSize),
-    ("nu.validator.servlet.connection-timeout", connectionTimeout),
-    ("nu.validator.servlet.socket-timeout", socketTimeout),
-    ("nu.validator.servlet.w3cbranding", w3cBranding),
-    ("nu.validator.servlet.statistics", statistics),
-    ("org.mortbay.http.HttpRequest.maxFormContentSize", httpRequestMaxFormContentSize),
-    ("nu.validator.servlet.host.generic", hostGeneric),
-    ("nu.validator.servlet.host.html5", hostHtml5),
-    ("nu.validator.servlet.host.parsetree", hostParseTree),
-    ("nu.validator.servlet.path.generic", pathGeneric),
-    ("nu.validator.servlet.path.html5", pathHtml5),
-    ("nu.validator.servlet.path.parsetree", pathParseTree),
-    ("nu.validator.servlet.path.about", pathAbout))
+  def log4jProperties(s: String) {
+    configs = configs + ("nu.validator.servlet.log4j-properties" -> s)
+  }
+
+  def version(i: Int) {
+    configs = configs + ("nu.validator.servlet.version" -> i)
+  }
+
+  def serviceName(s: String) {
+    configs = configs + ("nu.validator.servlet.service-name" -> s)
+  }
+
+  def dataTypeWarn(b: Boolean) {
+    configs = configs + ("org.whattf.datatype.warn" -> b)
+  }
+
+  def aboutPage(s: String) {
+    configs = configs + ("nu.validator.servlet.about-page" -> s)
+  }
+
+  def styleSheet(s: String) {
+    configs = configs + ("nu.validator.servlet.style-sheet" -> s)
+  }
+
+  def icon(s: String) {
+    configs = configs + ("nu.validator.servlet.icon" -> s)
+  }
+
+  def script(s: String) {
+    configs = configs + ("nu.validator.servlet.script" -> s)
+  }
+
+  def specHtml5Load(s: String) {
+    configs = configs + ("nu.validator.spec.html5-load" -> s)
+  }
+
+  def specHtml5Link(s: String) {
+    configs = configs + ("nu.validator.spec.html5-link" -> s)
+  }
+
+  def maxFileSize(i: Int) {
+    configs = configs + ("nu.validator.servlet.max-file-size" -> i)
+  }
+
+  def connectionTimeout(i: Int) {
+    configs = configs + ("nu.validator.servlet.connection-timeout" -> i)
+  }
+
+  def socketTimeout(i: Int) {
+    configs = configs + ("nu.validator.servlet.socket-timeout" -> i)
+  }
+
+  def w3cBranding(b: Boolean) {
+    configs = configs + ("nu.validator.servlet.w3cbranding" -> (if (b) 1 else 0))
+  }
+
+  def statistics(b: Boolean) {
+    configs = configs + ("nu.validator.servlet.statistics" -> (if (b) 1 else 0))
+  }
+
+  def httpRequestMaxFormContentSize(i: Int) {
+    configs = configs + ("org.mortbay.http.HttpRequest.maxFormContentSize" -> i)
+  }
+
+  def hostGeneric(s: String) {
+    configs = configs + ("nu.validator.servlet.host.generic" -> s)
+  }
+
+  def hostHtml5(s: String) {
+    configs = configs + ("nu.validator.servlet.host.html5" -> s)
+  }
+
+  def hostParseTree(s: String) {
+    configs = configs + ("nu.validator.servlet.host.parsetree" -> s)
+  }
+
+  def pathGeneric(s: String) {
+    configs = configs + ("nu.validator.servlet.path.generic" -> s)
+  }
+
+  def pathHtml5(s: String) {
+    configs = configs + ("nu.validator.servlet.path.html5" -> s)
+  }
+
+  def pathParseTree(s: String) {
+    configs = configs + ("nu.validator.servlet.path.parsetree" -> s)
+  }
+
+  def pathAbout(s: String) {
+    configs = configs + ("nu.validator.servlet.path.about" -> s)
+  }
 
   def setSystemProperties = {
-    configs map {
-      case i => {
-        System.setProperty(i.confname, i.value.toString())
+    configs.foreach {
+      case (k, v) => {
+        System.setProperty(k, v.toString())
       }
     }
   }
@@ -142,7 +207,7 @@ object HTMLValidatorMain {
 
   def main(args: Array[String]): Unit = {
     val port = args.toList.headOption.map(_.toInt) getOrElse 8888
-    val valconf = new HTMLValidatorConfiguration()
+    val valconf = HTMLValidatorConfiguration()
     valconf.setSystemProperties
     var server: Server = new Server
     var pool: QueuedThreadPool = new QueuedThreadPool
