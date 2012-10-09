@@ -6,27 +6,41 @@ The Validator.nu HTML Validator service
 This project packages the Validator.nu HTML Validator so that it can easily be run locally.
 
 How to build the Validator.nu
-----------------------------------
+-----------------------------
 
-    make
+```bash
+make
+```
 
-You need Python, Java , hg, svn and ant. The script takes the code from the official repository at Validator.nu.
+You need Python, Java , hg, svn and ant. The script takes the code from the official repository at [http://validator.nu/](http://validator.nu/).
+
+On some systems, you may have to set the `JAVA_HOME` variable:
+
+```bash
+JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64 make
+```
 
 How to run the Validator.nu standalone
-----------------------------
+--------------------------------------
 
-    ./sbt run
+```bash
+./sbt run
+```
 
 Then go to [http://localhost:8888](http://localhost:8888).
 
 How to generate a standalone jar
 ----------------------------
 
-	make jar
-	
-Then you can run validator following:
+```bash
+make jar
+```
 
-	java -jar target/validator-nu-standalone.jar 8888
+Then you can run the validator:
+
+```bash
+java -jar target/validator-nu-standalone.jar 8888
+```
 
 Licence
 -------
