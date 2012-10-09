@@ -70,11 +70,17 @@ object HTMLValidator extends Build {
       resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
       resolvers += "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
       resolvers += "apache-repo-releases" at "http://repository.apache.org/content/repositories/releases/",
-      libraryDependencies += "org.mortbay.jetty" % "jetty" % "6.1.26" % "compile"intransitive(),
-      libraryDependencies += "org.mortbay.jetty" % "servlet-api" % "2.5-20081211" % "compile"intransitive(),
-      libraryDependencies += "org.mortbay.jetty" % "jetty-util" % "6.1.26" % "compile"intransitive(),
-      libraryDependencies += "org.mortbay.jetty" % "jetty-ajp" % "6.1.26" % "compile"intransitive(),
+
+      libraryDependencies += "org.eclipse.jetty" % "jetty-webapp" % "8.1.7.v20120910" % "compile",
+      libraryDependencies += "org.eclipse.jetty" % "jetty-servlets" % "8.1.7.v20120910" % "compile",
+      libraryDependencies += "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "compile" artifacts (Artifact("javax.servlet", "jar", "jar")),
+      ivyXML := 
+        <dependency org="org.eclipse.jetty.orbit" name="javax.servlet" rev="3.0.0.v201112011016">
+          <artifact name="javax.servlet" type="orbit" ext="jar"/>
+        </dependency>,
+
       libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.6.4" % "compile",
+
       libraryDependencies += "commons-codec" % "commons-codec" % "1.4"intransitive(),
       libraryDependencies += "commons-httpclient" % "commons-httpclient" % "3.1"intransitive(),
       libraryDependencies += "commons-logging" % "commons-logging" % "1.1.1"intransitive(),

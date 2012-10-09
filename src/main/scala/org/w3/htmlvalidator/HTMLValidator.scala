@@ -1,26 +1,41 @@
 package org.w3.htmlvalidator
 
-import java.io.{ InputStream, OutputStream }
-import java.net.{ ConnectException, InetAddress, ServerSocket, Socket }
 import nu.validator.servletfilter.{ InboundGzipFilter, InboundSizeLimitFilter }
 import org.apache.log4j.PropertyConfigurator
-import org.mortbay.jetty.{ Connector, Handler, Server }
-import org.mortbay.jetty.ajp.Ajp13SocketConnector
-import org.mortbay.jetty.bio.SocketConnector
-import org.mortbay.jetty.servlet.{ Context, FilterHolder, ServletHolder }
-import org.mortbay.servlet.GzipFilter
-import org.mortbay.thread.QueuedThreadPool
-import java.nio.file.Paths
+import org.eclipse.jetty.server.{ Server, Handler }
+import org.eclipse.jetty.server.nio.SelectChannelConnector
+import org.eclipse.jetty.servlet.{ ServletContextHandler, ServletHolder, FilterHolder }
+import org.eclipse.jetty.servlets.GzipFilter
+import org.eclipse.jetty.util.thread.QueuedThreadPool
 import nu.validator.servlet.{ MultipartFormDataFilter, VerifierServlet }
+import javax.servlet.DispatcherType
+import java.util.EnumSet
 
 object HTMLValidator {
 
   def apply(port: Int): HTMLValidator = {
     val server: Server = {
-      val server = new Server
-      val pool: QueuedThreadPool = new QueuedThreadPool
-      pool.setMaxThreads(100)
-      server.setThreadPool(pool)
+      val connector = {
+        val connector = new SelectChannelConnector
+        connector.setPort(port)
+        connector.setMaxIdleTime(90000)
+        connector
+      }
+      val pool: QueuedThreadPool = {
+        val pool = new QueuedThreadPool
+        pool.setMaxThreads(100)
+        pool
+      }
+      val server = {
+        val server = new Server
+        server.setGracefulShutdown(500)
+        server.setSendServerVersion(false)
+        server.setSendDateHeader(true)
+        server.setStopAtShutdown(true)
+        server.setThreadPool(pool)
+        server.addConnector(connector)
+        server
+      }
       server
     }
     new HTMLValidator(server, port)
@@ -32,7 +47,7 @@ object HTMLValidator {
  * Validator.nu wrapping class
  * @author Hirotaka Nakajima <hiro@w3.org>
  */
-class HTMLValidator(server: Server, port: Int, ajp: Boolean = false) {
+class HTMLValidator(server: Server, port: Int) {
   // TODO shouldn't this be either passed?
   private val SIZE_LIMIT: Long = Integer.parseInt(System.getProperty("nu.validator.servlet.max-file-size", "2097152"))
 
@@ -42,29 +57,18 @@ class HTMLValidator(server: Server, port: Int, ajp: Boolean = false) {
   //    PropertyConfigurator.configure(System.getProperty("nu.validator.servlet.log4j-properties", "log4j.properties"))
   //  }
 
-  val connector: Connector =
-    if (ajp) {
-      val connector = new Ajp13SocketConnector
-      connector.setPort(port)
-      connector.setHost("127.0.0.1")
-      connector
-    } else {
-      val connector = new SocketConnector
-      connector.setPort(port)
-      connector
-    }
-
-  server.addConnector(connector)
-
-  val context: Context = {
-    val context = new Context(server, "/")
-    context.addFilter(new FilterHolder(new GzipFilter), "/*", Handler.REQUEST)
-    context.addFilter(new FilterHolder(new InboundSizeLimitFilter(SIZE_LIMIT)), "/*", Handler.REQUEST)
-    context.addFilter(new FilterHolder(new InboundGzipFilter), "/*", Handler.REQUEST)
-    context.addFilter(new FilterHolder(new MultipartFormDataFilter), "/*", Handler.REQUEST)
+  val context: ServletContextHandler = {
+    val context = new ServletContextHandler(server, "/")
+    val dispatches = EnumSet.of(DispatcherType.REQUEST)
+    context.addFilter(new FilterHolder(new GzipFilter), "/*", dispatches)
+    context.addFilter(new FilterHolder(new InboundSizeLimitFilter(SIZE_LIMIT)), "/*", dispatches)
+    context.addFilter(new FilterHolder(new InboundGzipFilter), "/*", dispatches)
+    context.addFilter(new FilterHolder(new MultipartFormDataFilter), "/*", dispatches)
     context.addServlet(new ServletHolder(new VerifierServlet), "/*")
     context
   }
+
+  server.setHandler(context)
 
   def stop(): Unit = {
     // TODO if passed from the outside, the server should not be stopped
