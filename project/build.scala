@@ -74,7 +74,7 @@ object HTMLValidator extends Build {
       libraryDependencies += "org.mortbay.jetty" % "servlet-api" % "2.5-20081211" % "compile"intransitive(),
       libraryDependencies += "org.mortbay.jetty" % "jetty-util" % "6.1.26" % "compile"intransitive(),
       libraryDependencies += "org.mortbay.jetty" % "jetty-ajp" % "6.1.26" % "compile"intransitive(),
-      libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.5.2" % "compile",
+      libraryDependencies += "org.slf4j" % "slf4j-log4j12" % "1.6.4" % "compile",
       libraryDependencies += "commons-codec" % "commons-codec" % "1.4"intransitive(),
       libraryDependencies += "commons-httpclient" % "commons-httpclient" % "3.1"intransitive(),
       libraryDependencies += "commons-logging" % "commons-logging" % "1.1.1"intransitive(),
