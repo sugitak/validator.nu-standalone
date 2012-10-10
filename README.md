@@ -1,6 +1,8 @@
 Validator.nu Standalone
 ========================
 
+This project continues at https://github.com/w3c/validators
+
 The Validator.nu HTML Validator service
 
 This project packages the Validator.nu HTML Validator so that it can easily be run locally.
