@@ -41,7 +41,7 @@ make jar
 Then you can run the validator:
 
 ```bash
-java -jar target/validator-nu-standalone.jar 8888
+java -jar target/scala-X.X.X/validator-nu-standalone.jar 8888
 ```
 
 Licence

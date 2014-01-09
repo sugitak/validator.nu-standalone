@@ -98,7 +98,7 @@ object HTMLValidator extends Build {
       libraryDependencies += "com.hp.hpl.jena" % "iri" % "0.5"intransitive(),
       libraryDependencies += "com.ibm.icu" % "icu4j" % "4.4.2" from "http://download.icu-project.org/files/icu4j/4.4.2/icu4j-4_4_2.jar"intransitive(),
       libraryDependencies += "com.ibm.icu" % "icu4j-charsets" % "4.4.2" from "http://download.icu-project.org/files/icu4j/4.4.2/icu4j-charsets-4_4_2.jar"intransitive(),
-      libraryDependencies += "antlr" % "antlr" % "validator.nu" from "http://hsivonen.iki.fi/code/antlr.jar"intransitive(),
+      libraryDependencies += "antlr" % "antlr" % "validator.nu" from "http://www.antlr.org/download/antlr-4.1-complete.jar"intransitive(),
       libraryDependencies += "isorelax" % "isorelax" % "20041111" from "http://switch.dl.sourceforge.net/sourceforge/iso-relax/isorelax.20041111.zip"intransitive()))
 
 }
